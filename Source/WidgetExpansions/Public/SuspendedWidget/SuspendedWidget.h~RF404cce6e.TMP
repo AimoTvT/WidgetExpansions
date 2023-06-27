@@ -1,0 +1,69 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "UMG/Public/Components/Image.h"
+#include "UMG/Public/Components/SizeBox.h"
+#include "UMG/Public/Components/TextBlock.h"
+#include "UMG/Public/Components/HorizontalBox.h"
+
+#include "SuspendedWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class WIDGETEXPANSIONS_API USuspendedWidget : public UUserWidget
+{
+	GENERATED_BODY()
+	
+public:
+
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
+		/** 滚动条控件变量 */
+		UHorizontalBox* HorizontalBoxWidget;
+
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
+		/** 滚动条控件变量 */
+		USizeBox* SizeBoxWidget;
+
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
+		/** 图像变量 */
+		UImage* ImageWidget;
+
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
+		/** 文字描述变量 */
+		UTextBlock* TextBlockWidget;
+
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+		/** 三维位置 */
+		FVector Vector;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+		/** 三维位置终点位置 */
+		FVector EndVector;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+		/** 销毁时间 */
+		float DestructTimer;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+		/** 动画速度 */
+		float AnimTimer;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+		/** 视口偏移 */
+		FVector2D Offset;
+
+
+public:
+
+	virtual void NativeConstruct() override;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+};
