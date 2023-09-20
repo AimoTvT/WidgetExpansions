@@ -21,55 +21,55 @@ class WIDGETEXPANSIONS_API USuspendedWidget : public UUserWidget
 
 public:
 
+	/** 滚动条控件变量 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-		/** 滚动条控件变量 */
 		UHorizontalBox* HorizontalBoxWidget;
 
+	/** 滚动条控件变量 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-		/** 滚动条控件变量 */
 		USizeBox* SizeBoxWidget;
 
+	/** 图像变量 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-		/** 图像变量 */
 		UImage* ImageWidget;
 
+	/** 文字描述变量 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-		/** 文字描述变量 */
 		UTextBlock* TextBlockWidget;
 
 
 
+	/** 三维位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 三维位置 */
 		FVector Location;
 
+	/** 三维位置终点位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 三维位置终点位置 */
 		FVector EndLocation;
 
+	/** 销毁时间 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 销毁时间 */
 		float DestructTimer;
 
+	/** 动画速度 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 动画速度 */
 		float AnimTimer;
 
+	/** 视口偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 视口偏移 */
 		FVector2D Offset;
 
+	/** 视口偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 视口偏移 */
 		bool bPlayerViewportRelative;
 
 
+	/** 定时器 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 定时器 */
 		FTimerHandle TimerHandle;
 
+	/** 销毁定时器 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 销毁定时器 */
 		FTimerHandle DestructTimerHandle;
 
 
@@ -79,32 +79,32 @@ public:
 
 	virtual void NativeConstruct() override;
 
+	/** 触发拖拽并传入控件 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 触发拖拽并传入控件 */
 		virtual void SetSuspended(const FString& String, const FVector& LocationT, const FVector& EndLocationT, TSoftObjectPtr<UObject> Image = nullptr, const FVector2D& ImageSize = FVector2D(50.0, 50.0));
 
+	/** 触发拖拽并传入控件,偏移版 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 触发拖拽并传入控件,偏移版 */
 		virtual void SetSuspendedOffset(const FString& String, const FVector& LocationT, FVector OffsetLocationT = FVector(0.0f, 0.0f, 222.0f), TSoftObjectPtr<UObject> Image = nullptr, FVector2D ImageSize = FVector2D(50.0,50.0));
 
+	/** 设置位置定时器 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 设置位置定时器 */
 		virtual void TimerHandleLocation();
 
+	/** 设置图像 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 设置图像 */
 		virtual void SetImage(TSoftObjectPtr<UObject> Image, FVector2D ImageSize = FVector2D(50.0, 50.0));
 
+	/** 添加销毁时间 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 添加销毁时间 */
 		virtual void AddDestructTimer(float Timer);
 
+	/** 销毁定时器 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 销毁定时器 */
 		virtual void NativeDestructTimerHandle();
 
+	/** 赛选动画 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 赛选动画 */
 		virtual void SuspendedPlayAnimation(const FString& String);
 
 	

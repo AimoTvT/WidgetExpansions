@@ -22,21 +22,21 @@ class WIDGETEXPANSIONS_API UWidgetDragButton : public UButton, public IUniversal
 	UWidgetDragButton();
 
 public:
-	
+
+	/** 拖拽的控件 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 拖拽的控件 */
 		UWidget* DragWidget;
 
+	/** 拖拽的位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 拖拽的位置 */
 		FVector2D DragPosition;
 
+	/** 拖拽的位置偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 拖拽的位置偏移 */
 		FVector2D DragPositionOffset;
 
+	/** 拖拽的定时器 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		/** 拖拽的定时器 */
 		FTimerHandle DragTimerHandle;
 
 protected:
@@ -46,13 +46,13 @@ protected:
 public:
 
 
-	
+
+	/** 触发拖拽并传入控件 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 触发拖拽并传入控件 */
 		bool OnDragWidget(UWidget* Widget,bool bDrag);
 
+	/** 定时器调用的事件,修改控件的位置 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		/** 定时器调用的事件,修改控件的位置 */
 		void TimerDragPosition();
 
 };
