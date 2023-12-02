@@ -25,19 +25,19 @@ public:
 
 	/** 拖拽的控件 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		UWidget* DragWidget;
+	TObjectPtr<UWidget> DragWidget;
 
 	/** 拖拽的位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		FVector2D DragPosition;
+	FVector2D DragPosition;
 
 	/** 拖拽的位置偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		FVector2D DragPositionOffset;
+	FVector2D DragPositionOffset;
 
 	/** 拖拽的定时器 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-		FTimerHandle DragTimerHandle;
+	FTimerHandle DragTimerHandle;
 
 protected:
 
@@ -49,10 +49,10 @@ public:
 
 	/** 触发拖拽并传入控件 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		bool OnDragWidget(UWidget* Widget,bool bDrag);
+	bool OnDragWidget(UWidget* Widget, bool bDrag);
 
 	/** 定时器调用的事件,修改控件的位置 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-		void TimerDragPosition();
+	void TimerDragPosition();
 
 };
