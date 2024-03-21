@@ -7,7 +7,7 @@
 #include "UMG/Public/Components/Image.h"
 #include "PictureSequence.generated.h"
 
-/**
+/** *
  *
  */
 UCLASS()
@@ -17,39 +17,39 @@ class WIDGETEXPANSIONS_API UPictureSequence : public UUserWidget
 
 public:
 
-	/** 图像变量 */
-	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
+	/** * 图像控件 */
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "PictureSequence|Variable")
 	TObjectPtr<UImage> ImageWidget;
 
-	/** 每秒帧数(切换图片的速度,越大越好) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
+	/** * 每秒帧数(切换图片的速度,越大越好) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PictureSequence|Variable")
 	float FramesPerSecond = 25.0f;
 
-	/** 图片组的索引 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
+	/** * 图片组的索引 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PictureSequence|Variable")
 	int Texture2DsIndex = 0;
 
-	/** 图片组序列 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
-	TArray<UTexture2D*> Texture2Ds;
+	/** * 图片组序列 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PictureSequence|Variable")
+	TArray<TObjectPtr<UTexture2D>> Texture2Ds;
 
-	/** 切换图片的定时器 */
-	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	FTimerHandle FPSTimerHandle; //定义变量.h
+	/** * 切换图片的定时器 */
+	UPROPERTY(BlueprintReadWrite, Category = "PictureSequence|Variable")
+	FTimerHandle FPSTimerHandle; 
 
-	/** 切换图片的定时器 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
-	bool bPictureEndRem = false; //定义变量.h
+	/** * 切换图片的定时器 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PictureSequence|Variable")
+	bool bPictureEndRem = false; 
 
 
 public:
 
-	/** 初始化 */
-	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
+	/** * 初始化控件 */
+	UFUNCTION(BlueprintCallable, Category = "PictureSequence|Function")
 	virtual void InitWidget(TArray<UTexture2D*> OTexture2Ds, float OFramesPerSecond = 25.0f, int OTexture2DsIndex = 0);
 
-	/** 切换图片的定时器调用的函数 */
-	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
+	/** * 切换图片的定时器调用的函数 */
+	UFUNCTION(BlueprintCallable, Category = "PictureSequence|Function")
 	virtual void OnFPSTimerHandle();
 
 };

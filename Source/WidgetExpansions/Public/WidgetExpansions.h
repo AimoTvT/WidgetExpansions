@@ -9,7 +9,7 @@ class FWidgetExpansionsModule : public IModuleInterface
 {
 public:
 
-	/** IModuleInterface implementation */
+	/** * IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 };

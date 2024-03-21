@@ -8,7 +8,7 @@
 
 #include "SelectScrollBox.generated.h"
 
-/**
+/** *
  * 
  */
 UCLASS()
@@ -18,63 +18,63 @@ class WIDGETEXPANSIONS_API USelectScrollBox : public UScrollBox
 	
 public:
 
-	/** 识别的ID */
+	/** * 识别的ID */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	FString ID;
 
-	/** 识别的UID */
+	/** * 识别的UID */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	TArray<FString> IDs;
 
-	/** 识别的UID */
+	/** * 识别的UID */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	TArray<FText> Texts;
 
-	/** 选择索引 */
+	/** * 选择索引 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	int SelectIndex;
 
-	/** 按键高度 */
+	/** * 按键高度 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	float ButttonHeight = 60;
 
-	/** 默认样式 */
+	/** * 默认样式 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Appearance")
 	FButtonStyle DefaultStyle;
 
-	/** 选择样式 */
+	/** * 选择样式 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Appearance")
 	FButtonStyle SelectStyle;
 
-	/** 文字样式 */
+	/** * 文字样式 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Appearance")
 	FSlateFontInfo SlateFontInfo;
 
-	/** 资源图片组 */
+	/** * 资源图片组 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
 	TArray<TObjectPtr<USizeBox>> SizeBoxWidgets;
 
-	/** * 委托宏2个输入 */
+	/** * * 委托宏2个输入 */
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnIDClickedEvent, const FString&, OnID, const FString&, SelectID);
 
-	/** * 委托宏2个输入 */
+	/** * * 委托宏2个输入 */
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnIDHoverEvent, const FString&, OnID, const FString&, SelectID);
 
-	/** * 触发的委托变量 */
+	/** * * 触发的委托变量 */
 	UPROPERTY(BlueprintAssignable, Category = "SelectScrollBox|On")
 	FOnIDClickedEvent OnClickedSelect;
 
-	/** * 触发的委托变量 */
+	/** * * 触发的委托变量 */
 	UPROPERTY(BlueprintAssignable, Category = "SelectScrollBox|On")
 	FOnIDHoverEvent OnHoverSelect;
 
 protected:
-	/** Function called after the underlying SWidget is constructed. */
+	/** * Function called after the underlying SWidget is constructed. */
 	virtual void OnWidgetRebuilt() override;
 
 	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-	virtual void NativePreConstruct();
+	virtual void NativeConstruct();
 
 public:
 

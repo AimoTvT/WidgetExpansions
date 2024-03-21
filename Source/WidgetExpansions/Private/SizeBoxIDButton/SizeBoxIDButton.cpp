@@ -3,12 +3,14 @@
 
 #include "SizeBoxIDButton/SizeBoxIDButton.h"
 
+
+
 void USizeBoxIDButton::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
 	if (!IsDesignTime())
 	{
-		NativePreConstruct();
+		NativeConstruct();
 	}
 }
 
@@ -27,28 +29,60 @@ void USizeBoxIDButton::OnWidgetRebuilt()
 //	}
 //}
 
-void USizeBoxIDButton::NativePreConstruct()
+void USizeBoxIDButton::NativeConstruct()
 {
-	if (Button == nullptr)
+	if (ButtonWidget == nullptr)
 	{
-		Button = NewObject<UButton>(this);
+		ButtonWidget = NewObject<UButton>(this);
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnIDClicked_Event"); //对接变量绑定函数
-		Button->OnClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, "OnIDHovered_Event"); //对接变量绑定函数
-		Button->OnHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+		ButtonWidget->OnClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+		ButtonWidget->OnHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ButtonWidget->SetStyle(ButtonStyle);
 		ClearChildren();
-		AddChild(Button);
+		AddChild(ButtonWidget);
 	}
 	
 }
 
-void USizeBoxIDButton::OnIDClicked_Event()
+void USizeBoxIDButton::OnClickedID_Event()
 {
-	OnIDClicked.Broadcast(ID);
+	OnClickedID.Broadcast(ID);
 }
 
-void USizeBoxIDButton::OnIDHovered_Event()
+void USizeBoxIDButton::OnHoveredID_Event()
 {
-	OnIDHover.Broadcast(ID);
+	OnHoverID.Broadcast(ID);
+}
+
+void USizeBoxIDButton::SetID(const FString& InID)
+{
+	ID = InID;
+}
+
+void USizeBoxIDButton::SetButtonStyle(const FButtonStyle& InButtonStyle)
+{
+	ButtonStyle = InButtonStyle;
+	if (ButtonWidget)
+	{
+		ButtonWidget->SetStyle(ButtonStyle);
+	}
+}
+
+void USizeBoxIDButton::BindScriptDelegate(UObject* InObject, const FName& InFunctionName, bool bClicked)
+{
+	if (InObject)
+	{
+		FScriptDelegate ScriptDelegate; //建立对接变量
+		ScriptDelegate.BindUFunction(InObject, InFunctionName); //对接变量绑定函数
+		if (bClicked)
+		{
+			OnClickedID.Add(ScriptDelegate);
+		}
+		else
+		{
+			OnHoverID.Add(ScriptDelegate);
+		}
+	}
 }

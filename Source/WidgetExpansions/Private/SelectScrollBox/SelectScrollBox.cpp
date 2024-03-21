@@ -12,7 +12,7 @@ void USelectScrollBox::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 	if (!IsDesignTime())
 	{
-		NativePreConstruct();
+		NativeConstruct();
 	}
 }
 
@@ -31,7 +31,7 @@ void USelectScrollBox::OnWidgetRebuilt()
 //	}
 //}
 
-void USelectScrollBox::NativePreConstruct()
+void USelectScrollBox::NativeConstruct()
 {
 	InitButton();
 }
@@ -99,10 +99,10 @@ void USelectScrollBox::InitButton()
 		}
 		IDButton->ID = IDs[i];
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnIDClicked_Event"); //对接变量绑定函数
-		IDButton->OnIDClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, "OnIDHovered_Event"); //对接变量绑定函数
-		IDButton->OnIDHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+		IDButton->OnClickedID.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+		IDButton->OnHoveredID.AddUnique(ScriptDelegate); //对接变量绑定函数
 		IDButton->SetStyle(SelectIndex == i ? SelectStyle : DefaultStyle);
 		UPanelSlot* PanelSlot = SizeBox->AddChild(IDButton);
 		if (PanelSlot)

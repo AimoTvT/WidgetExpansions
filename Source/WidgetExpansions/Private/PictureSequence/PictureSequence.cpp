@@ -24,7 +24,7 @@ void UPictureSequence::OnFPSTimerHandle()
 	}
 	if (bPictureEndRem && Texture2DsIndex + 1 == Texture2Ds.Num())
 	{
-		RemoveFromParent(); /** 从父类移除 */
+		RemoveFromParent(); /** * 从父类移除 */
 	}
 	else
 	{

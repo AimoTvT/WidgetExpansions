@@ -10,21 +10,21 @@ void UIDButton::OnWidgetRebuilt()
 	if (IsDesignTime() == false)
 	{
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnIDClicked_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
 		OnClicked.AddUnique(ScriptDelegate);
-		ScriptDelegate.BindUFunction(this, "OnIDHovered_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
 		OnHovered.AddUnique(ScriptDelegate);
 	}
 	return;
 }
-void UIDButton::OnIDClicked_Event()
+void UIDButton::OnClickedID_Event()
 {
-	OnIDClicked.Broadcast(ID);
+	OnClickedID.Broadcast(ID);
 }
 
-void UIDButton::OnIDHovered_Event()
+void UIDButton::OnHoveredID_Event()
 {
-	OnIDHovered.Broadcast(ID);
+	OnHoveredID.Broadcast(ID);
 }
 
 

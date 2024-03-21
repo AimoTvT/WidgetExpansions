@@ -18,11 +18,11 @@ bool USuspendedWidget::Initialize()
 void USuspendedWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	AddDestructTimer(2.2); /** 添加销毁时间 */
-	SuspendedPlayAnimation("Play");  /** 播放开始动画 */
+	AddDestructTimer(2.2); /** * 添加销毁时间 */
+	SuspendedPlayAnimation("Play");  /** * 播放开始动画 */
 	if (!GetWorld()->GetTimerManager().IsTimerActive(TimerHandle))
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USuspendedWidget::TimerHandleLocation, 0.02f, true); /** 启动设置位置定时器 */
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USuspendedWidget::TimerHandleLocation, 0.02f, true); /** * 启动设置位置定时器 */
 	}
 }
 
@@ -30,12 +30,12 @@ void USuspendedWidget::SetSuspended(const FString& String, const FVector& Locati
 {
 	Location = LocationT;
 	EndLocation = EndLocationT;
-	SetImage(Image, ImageSize); /** 设置图像 */
+	SetImage(Image, ImageSize); /** * 设置图像 */
 	if (GetWorld() && GetWorld()->GetFirstPlayerController() && GetWorld()->GetFirstPlayerController()->PlayerCameraManager)
 	{
-		float Size = FVector::Distance(LocationT, GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation()); /** 计算摄像机和目标的距离 */
+		float Size = FVector::Distance(LocationT, GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation()); /** * 计算摄像机和目标的距离 */
 		Size = 1 - FMath::Clamp(Size * 0.22 * 0.001, 0.0, 0.6);
-		SetRenderTransform(FWidgetTransform{ {0.0f, 0.0f},{Size,Size},{0.0f, 0.0f},0.0f }); /** 设置变换 */
+		SetRenderTransform(FWidgetTransform{ {0.0f, 0.0f},{Size,Size},{0.0f, 0.0f},0.0f }); /** * 设置变换 */
 	}
 	if (TextBlockWidget)
 	{
@@ -48,7 +48,7 @@ void USuspendedWidget::SetSuspendedOffset(const FString& String, const FVector& 
 	return SetSuspended(String, LocationT, LocationT + OffsetLocationT, Image, ImageSize);
 }
 
-void USuspendedWidget::TimerHandleLocation() /** 定时器0.02秒设置三维到屏幕位置 */
+void USuspendedWidget::TimerHandleLocation() /** * 定时器0.02秒设置三维到屏幕位置 */
 {
 	if (Location != EndLocation)
 	{
@@ -61,7 +61,7 @@ void USuspendedWidget::TimerHandleLocation() /** 定时器0.02秒设置三维到
 				SetVisibility(ESlateVisibility::Visible);
 			}
 			OffsetT = (OffsetT + GetDesiredSize() * -0.5 + Offset) * UWidgetLayoutLibrary::GetViewportScale(this);
-			SetPositionInViewport(OffsetT);/** 计算完整偏移,并设置位置 */
+			SetPositionInViewport(OffsetT);/** * 计算完整偏移,并设置位置 */
 		}
 		else
 		{
@@ -74,7 +74,7 @@ void USuspendedWidget::TimerHandleLocation() /** 定时器0.02秒设置三维到
 	return;
 }
 
-void USuspendedWidget::SetImage(TSoftObjectPtr<UObject> SoftObject, FVector2D ImageSize) /** 设置图像 */
+void USuspendedWidget::SetImage(TSoftObjectPtr<UObject> SoftObject, FVector2D ImageSize) /** * 设置图像 */
 {
 	if (SoftObject.IsValid())
 	{
@@ -124,7 +124,7 @@ void USuspendedWidget::SetImage(TSoftObjectPtr<UObject> SoftObject, FVector2D Im
 	}
 }
 
-void USuspendedWidget::AddDestructTimer(float Timer) /** 添加销毁时间 */
+void USuspendedWidget::AddDestructTimer(float Timer) /** * 添加销毁时间 */
 {
 	DestructTimer += Timer;
 	if (DestructTimer > 0)
@@ -140,7 +140,7 @@ void USuspendedWidget::AddDestructTimer(float Timer) /** 添加销毁时间 */
 		{
 			GetWorld()->GetTimerManager().ClearTimer(DestructTimerHandle);
 		}
-		SuspendedPlayAnimation("Des"); /** 播放销毁动画 */
+		SuspendedPlayAnimation("Des"); /** * 播放销毁动画 */
 	}
 }
 
@@ -149,7 +149,7 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 	UObject* Object;
 	FObjectProperty* ObjectProperty;
 	UWidgetAnimation* WidgetAnimation;
-	if (String == "Des") /** 判断是否销毁 */
+	if (String == "Des") /** * 判断是否销毁 */
 	{
 		if (DestructTimer < 1.8)
 		{
@@ -167,7 +167,7 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 		}
 		return;
 	}
-	if (String == "Play") /** 判断是否开始 */
+	if (String == "Play") /** * 判断是否开始 */
 	{
 		ObjectProperty = FindFProperty<FObjectProperty>(GetClass(), "BianDaAnimation"); //Object指针类型变量
 		Object = Cast<UWidgetAnimation>(ObjectProperty->GetObjectPropertyValue_InContainer(this)); //转换Object类型
@@ -192,6 +192,6 @@ void USuspendedWidget::NativeDestructTimerHandle()
 	}
 	if (DestructTimer <= 0.0)
 	{
-		RemoveFromParent(); /** 从父类移除 */
+		RemoveFromParent(); /** * 从父类移除 */
 	}
 }

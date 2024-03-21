@@ -12,7 +12,7 @@ void USelectHorizontalBox::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 	if (!IsDesignTime())
 	{
-		NativePreConstruct();
+		NativeConstruct();
 	}
 }
 
@@ -31,19 +31,19 @@ void USelectHorizontalBox::OnWidgetRebuilt()
 //	}
 //}
 
-void USelectHorizontalBox::NativePreConstruct()
+void USelectHorizontalBox::NativeConstruct()
 {
 	InitButton();
 }
 
 
-void USelectHorizontalBox::OnIDClicked_Event(const FString& OnID)
+void USelectHorizontalBox::OnClickedID_Event(const FString& OnID)
 {
 	OnClickedSelect.Broadcast(ID, OnID);
 	SetSelectIndex(IDs.Find(OnID));
 }
 
-void USelectHorizontalBox::OnIDHovered_Event(const FString& OnID)
+void USelectHorizontalBox::OnHoveredID_Event(const FString& OnID)
 {
 	OnHoverSelect.Broadcast(ID, OnID);
 }
@@ -82,10 +82,10 @@ void USelectHorizontalBox::InitButton()
 			ButtonWidgets.Add(IDButton);
 			IDButton->ID = IDs[i];
 			FScriptDelegate ScriptDelegate; //建立对接变量
-			ScriptDelegate.BindUFunction(this, "OnIDClicked_Event"); //对接变量绑定函数
-			IDButton->OnIDClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
-			ScriptDelegate.BindUFunction(this, "OnIDHovered_Event"); //对接变量绑定函数
-			IDButton->OnIDHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
+			ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+			IDButton->OnClickedID.AddUnique(ScriptDelegate); //对接变量绑定函数
+			ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+			IDButton->OnHoveredID.AddUnique(ScriptDelegate); //对接变量绑定函数
 			IDButton->SetStyle(SelectIndex == i ? SelectStyle : DefaultStyle);
 			UPanelSlot* PanelSlot = AddChild(IDButton);
 			if (PanelSlot)
