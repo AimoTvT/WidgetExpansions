@@ -36,7 +36,7 @@ public:
 
 	/** * 按键高度 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Variable")
-	float ButttonHeight = 60;
+	float ButttonSize = 60;
 
 	/** * 默认样式 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectScrollBox|Appearance")
@@ -80,11 +80,11 @@ public:
 
 	/* * 按下的委托 */
 	UFUNCTION(BlueprintCallable, Category = "SelectScrollBox|Function")
-	void OnIDClicked_Event(const FString& OnID);
+	void OnClickedID_Event(const FString& OnID);
 
 	/* * 触摸的委托 */
 	UFUNCTION(BlueprintCallable, Category = "SelectScrollBox|Function")
-	void OnIDHovered_Event(const FString& OnID);
+	void OnHoveredID_Event(const FString& OnID);
 
 	/* * 设置索引显示,是否委托 */
 	UFUNCTION(BlueprintCallable, Category = "SelectScrollBox|Function")

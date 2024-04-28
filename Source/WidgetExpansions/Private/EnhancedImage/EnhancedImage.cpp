@@ -8,107 +8,92 @@
 
 
 
-void UEnhancedImage::SetMaxImageSize(const FVector2D& MaxSiz)
+void UEnhancedImage::SetMaxImageSize(const FVector2D& MaxSize)
 {
-	MaxImageSize = MaxSiz;
+	MaxImageSize = MaxSize;
 	SetBrushFromResourceObject(GetBrush().GetResourceObject());
 }
 
-void UEnhancedImage::SetBrushFromSoftTextureEnhanced(TSoftObjectPtr<UTexture> SoftTexture, const FVector2D& MaxSize)
+void UEnhancedImage::AsyncBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& InSoftObjectPtr)
 {
-	TWeakObjectPtr<UImage> WeakThis(this); // using weak ptr in case 'this' has gone out of scope by the time this lambda is called
-	RequestAsyncLoad(SoftTexture,
-		[WeakThis, SoftTexture, MaxSize]() {
-			if (UImage* StrongThis = WeakThis.Get())
+	TWeakObjectPtr<UEnhancedImage> WeakThis(this); // using weak ptr in case 'this' has gone out of scope by the time this lambda is called
+	RequestAsyncLoad(InSoftObjectPtr,
+		[WeakThis, InSoftObjectPtr]() {
+			if (UEnhancedImage* StrongThis = WeakThis.Get())
 			{
-				ensureMsgf(SoftTexture.Get(), TEXT("Failed to load %s"), *SoftTexture.ToSoftObjectPath().ToString());
-				StrongThis->SetBrushResourceObject(SoftTexture.Get());
-				if (MaxSize.X != 0.0f)
-				{
-					UTexture2D* Texture2D = Cast<UTexture2D>(SoftTexture.Get());
-					if (Texture2D)
-					{
-						FVector2D Size;
-						Size.X = Texture2D->GetSizeX();
-						Size.Y = Texture2D->GetSizeY();
-						Size = UUniversalFunctionLibrarys::GetXYClampSize(Size.X, Size.Y, MaxSize.X, MaxSize.Y);
-						UUniversalWidgetFunctionLibrary::SetWidgetSize(StrongThis, Size);
-						return;
-					}
-				}
-				UUniversalWidgetFunctionLibrary::SetWidgetSize(StrongThis, MaxSize);
+				ensureMsgf(InSoftObjectPtr.Get(), TEXT("Failed to load %s"), *InSoftObjectPtr.ToSoftObjectPath().ToString());
+				StrongThis->SetBrushFromResourceObject(InSoftObjectPtr.Get());
 				return;
 			}
 		}
 	);
 }
 
-bool UEnhancedImage::SetBrushFromSoftPath(const FString& Path, const FVector2D& MaxSize)
+void UEnhancedImage::SetBrushFromSoftPath(const FString& Path, const FVector2D& MaxSize)
 {
 	if (MaxSize.X != 0.0f)
 	{
 		MaxImageSize = MaxSize;
 	}
-	TSoftObjectPtr<UTexture> SoftTexture = TSoftObjectPtr<UTexture>(Path);
-	if (SoftTexture.IsNull() == false)
+	TSoftObjectPtr<UObject> SoftObject = TSoftObjectPtr<UObject>(Path);
+	if (SoftObject.IsNull() == false)
 	{
-		if (SoftTexture.IsValid())
+		if (SoftObject.IsValid())
 		{
-			SetBrushFromResourceObject(SoftTexture.Get());
-			return true;
+			SetBrushFromResourceObject(SoftObject.Get());
+			return;
 		}
-		SetBrushFromSoftTextureEnhanced(SoftTexture, MaxImageSize);
-		return true;
+		AsyncBrushFromSoftObjectPtr(SoftObject);
 	}
-	TSoftObjectPtr<UMaterialInterface> SoftMaterial = TSoftObjectPtr<UMaterialInterface>(Path);
-	if (SoftMaterial.IsNull() == false)
-	{
-		if (SoftMaterial.IsValid())
-		{
-			SetBrushFromResourceObject(SoftMaterial.Get());
-			return true;
-		}
-		SetBrushFromSoftMaterial(SoftMaterial);
-		UUniversalWidgetFunctionLibrary::SetWidgetSize(this, MaxImageSize);
-		return true;
-	}
-	return false;
+	return;
 }
 
-bool UEnhancedImage::SetBrushFromSoftObject(TSoftObjectPtr<UObject> SoftObjectPtr, const FVector2D& MaxSize)
+void UEnhancedImage::SetBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& InSoftObjectPtr, const FVector2D& MaxSize)
 {
 	if (MaxSize.X != 0.0f)
 	{
 		MaxImageSize = MaxSize;
 	}
-	if (SoftObjectPtr.IsNull())
+	if (InSoftObjectPtr.IsNull())
 	{
-		return false;
+		return;
 	}
-	if (SoftObjectPtr.Get())
+	if (InSoftObjectPtr.Get())
 	{
-		SetBrushFromResourceObject(SoftObjectPtr.Get());
-		return true;
+		SetBrushFromResourceObject(InSoftObjectPtr.Get());
+		return;
 	}
-	return SetBrushFromSoftPath(SoftObjectPtr.ToString(), MaxSize);
+	AsyncBrushFromSoftObjectPtr(InSoftObjectPtr);
+	return;
 }
 
 void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 {
 	if (Object)
 	{
-		SetBrushResourceObject(Object); 
 		UTexture2D* Texture2D = Cast<UTexture2D>(Object);
-		if (Texture2D)
+		if (Texture2D && MaxImageSize.X != 0.0f)
 		{
+			SetBrushResourceObject(Object);
 			FVector2D Size;
 			Size.X = Texture2D->GetSizeX();
 			Size.Y = Texture2D->GetSizeY();
 			Size = UUniversalFunctionLibrarys::GetXYClampSize(Size.X, Size.Y, MaxImageSize.X, MaxImageSize.Y);
+			if (bMaxImageSize  && Size.X < MaxImageSize.X && Size.Y < MaxImageSize.Y)
+			{
+				Size = Size * (MaxImageSize / Size);
+			}
 			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, Size);
 			return;
 		}
-		UUniversalWidgetFunctionLibrary::SetWidgetSize(this, MaxImageSize);
+		if (Cast<UTexture>(Object) || Cast<UMaterialInterface>(Object))
+		{
+			SetBrushResourceObject(Object);
+		}
+		if (MaxImageSize.X != 0.0f)
+		{
+			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, MaxImageSize);
+		}
 	}
 }
 

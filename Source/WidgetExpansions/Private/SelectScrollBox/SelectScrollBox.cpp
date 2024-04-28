@@ -37,13 +37,13 @@ void USelectScrollBox::NativeConstruct()
 }
 
 
-void USelectScrollBox::OnIDClicked_Event(const FString& OnID)
+void USelectScrollBox::OnClickedID_Event(const FString& OnID)
 {
 	OnClickedSelect.Broadcast(ID, OnID);
 	SetSelectIndex(IDs.Find(OnID));
 }
 
-void USelectScrollBox::OnIDHovered_Event(const FString& OnID)
+void USelectScrollBox::OnHoveredID_Event(const FString& OnID)
 {
 	OnHoverSelect.Broadcast(ID, OnID);
 }
@@ -91,7 +91,17 @@ void USelectScrollBox::InitButton()
 		}
 		SizeBoxWidgets.Add(SizeBox);
 		AddChild(SizeBox);
-		SizeBox->SetHeightOverride(ButttonHeight);
+		if (GetOrientation() == EOrientation::Orient_Vertical)
+		{
+			SizeBox->SetHeightOverride(ButttonSize);
+		}
+		else
+		{
+			if (ButttonSize > 0.0f)
+			{
+				SizeBox->SetWidthOverride(ButttonSize);
+			}
+		}
 		UIDButton* IDButton = NewObject<UIDButton>(this);
 		if (IDButton == nullptr)
 		{
@@ -99,9 +109,9 @@ void USelectScrollBox::InitButton()
 		}
 		IDButton->ID = IDs[i];
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
 		IDButton->OnClickedID.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
 		IDButton->OnHoveredID.AddUnique(ScriptDelegate); //对接变量绑定函数
 		IDButton->SetStyle(SelectIndex == i ? SelectStyle : DefaultStyle);
 		UPanelSlot* PanelSlot = SizeBox->AddChild(IDButton);

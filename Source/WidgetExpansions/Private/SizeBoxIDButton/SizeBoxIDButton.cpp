@@ -35,9 +35,9 @@ void USizeBoxIDButton::NativeConstruct()
 	{
 		ButtonWidget = NewObject<UButton>(this);
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
 		ButtonWidget->OnClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
 		ButtonWidget->OnHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
 		ButtonWidget->SetStyle(ButtonStyle);
 		ClearChildren();

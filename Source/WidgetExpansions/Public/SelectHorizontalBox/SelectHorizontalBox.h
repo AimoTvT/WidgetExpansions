@@ -45,7 +45,7 @@ public:
 	FSlateFontInfo SlateFontInfo;
 
 	/** * 按钮控件组 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SelectHorizontalBox|Variable")
+	UPROPERTY(BlueprintReadWrite, Category = "SelectHorizontalBox|Variable")
 	TArray<TObjectPtr<UButton>> ButtonWidgets;
 
 	/** * * 委托宏2个输入 */

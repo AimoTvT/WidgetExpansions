@@ -39,6 +39,7 @@ public class WidgetExpansions : ModuleRules
 				"Slate",
 				"SlateCore",
 				"UMG",
+                "ResourcesExpansions",
                 "UniversalInterface",
                 "UniversalFunctionLibrary",
 				// ... add private dependencies that you statically link with here ...	

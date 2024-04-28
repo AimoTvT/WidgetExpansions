@@ -19,7 +19,7 @@ void USuspendedWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	AddDestructTimer(2.2); /** * 添加销毁时间 */
-	SuspendedPlayAnimation("Play");  /** * 播放开始动画 */
+	SuspendedPlayAnimation(TEXT("Play"));  /** * 播放开始动画 */
 	if (!GetWorld()->GetTimerManager().IsTimerActive(TimerHandle))
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USuspendedWidget::TimerHandleLocation, 0.02f, true); /** * 启动设置位置定时器 */
@@ -140,7 +140,7 @@ void USuspendedWidget::AddDestructTimer(float Timer) /** * 添加销毁时间 */
 		{
 			GetWorld()->GetTimerManager().ClearTimer(DestructTimerHandle);
 		}
-		SuspendedPlayAnimation("Des"); /** * 播放销毁动画 */
+		SuspendedPlayAnimation(TEXT("Des")); /** * 播放销毁动画 */
 	}
 }
 
@@ -149,13 +149,13 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 	UObject* Object;
 	FObjectProperty* ObjectProperty;
 	UWidgetAnimation* WidgetAnimation;
-	if (String == "Des") /** * 判断是否销毁 */
+	if (String == TEXT("Des")) /** * 判断是否销毁 */
 	{
 		if (DestructTimer < 1.8)
 		{
 			return;
 		}
-		ObjectProperty = FindFProperty<FObjectProperty>(GetClass(), "JianBianXianShiAnimation"); //Object指针类型变量
+		ObjectProperty = FindFProperty<FObjectProperty>(GetClass(), TEXT("JianBianXianShiAnimation")); //Object指针类型变量
 		Object = Cast<UWidgetAnimation>(ObjectProperty->GetObjectPropertyValue_InContainer(this)); //转换Object类型
 		if (Object)
 		{
@@ -167,9 +167,9 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 		}
 		return;
 	}
-	if (String == "Play") /** * 判断是否开始 */
+	if (String == TEXT("Play")) /** * 判断是否开始 */
 	{
-		ObjectProperty = FindFProperty<FObjectProperty>(GetClass(), "BianDaAnimation"); //Object指针类型变量
+		ObjectProperty = FindFProperty<FObjectProperty>(GetClass(), TEXT("BianDaAnimation")); //Object指针类型变量
 		Object = Cast<UWidgetAnimation>(ObjectProperty->GetObjectPropertyValue_InContainer(this)); //转换Object类型
 		if (Object)
 		{
@@ -188,7 +188,7 @@ void USuspendedWidget::NativeDestructTimerHandle()
 	DestructTimer = DestructTimer - 0.2;
 	if (DestructTimer <= 2.0)
 	{
-		SuspendedPlayAnimation("Des");
+		SuspendedPlayAnimation(TEXT("Des"));
 	}
 	if (DestructTimer <= 0.0)
 	{

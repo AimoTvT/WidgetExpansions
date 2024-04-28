@@ -10,9 +10,9 @@ void UIDButton::OnWidgetRebuilt()
 	if (IsDesignTime() == false)
 	{
 		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, "OnClickedID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
 		OnClicked.AddUnique(ScriptDelegate);
-		ScriptDelegate.BindUFunction(this, "OnHoveredID_Event"); //对接变量绑定函数
+		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
 		OnHovered.AddUnique(ScriptDelegate);
 	}
 	return;

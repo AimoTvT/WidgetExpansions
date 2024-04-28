@@ -18,20 +18,20 @@ FString UWidgetDragButton::ICommunication_Implementation(UObject* InObject, cons
 {
 	TArray<FString> Strings = UUniversalFunctionLibrarys::StringParseIntoArray(InString);
 	UWidget* Widget = Cast<UWidget>(InObject);
-	if (Widget && Strings.Num() >= 1 && Strings[0] == "OnDragWidget")
+	if (Widget && Strings.Num() >= 1 && Strings[0] == TEXT("OnDragWidget"))
 	{
-		if (Strings.Num() > 1 && Strings[1] != "0")
+		if (Strings.Num() > 1 && Strings[1] != TEXT("0"))
 		{
 			OnDragWidget(Widget,true);
-			return "1";
+			return  TEXT("1");
 		}
 		else
 		{
 			OnDragWidget(Widget, false);
-			return "0";
+			return  TEXT("0");
 		}
 	}
-	return "0";
+	return  TEXT("0");
 }
 
 bool UWidgetDragButton::OnDragWidget(UWidget* Widget, bool bDrag)
