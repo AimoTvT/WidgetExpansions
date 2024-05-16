@@ -1,6 +1,5 @@
 /**
  * Copyright: Aimo_皑墨
- * Open source protocol: MIT License
  * Open Source Date: Jun 27, 2023
  * BiLiBiLi (哔哩哔哩) address: https://space.bilibili.com/146962867
  * Open source address(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -8,7 +7,6 @@
  * Build powerful plugins together!!
  *
  * 版权所有权: Aimo_皑墨
- * 开源协议: MIT License
  * 开源时间: 2023年6月27日
  * BiLiBiLi(哔哩哔哩)地址: https://space.bilibili.com/146962867
  * 开源地址(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -18,37 +16,10 @@
 
 
 #include "WidgetDrags/WidgetDragButton.h" /** * 拖拽按钮控件头文件 */
-#include "Runtime/UMG/Public/Blueprint/WidgetLayoutLibrary.h" /** * 控件函数头文件 */
-#include "Runtime/UMG/Public/Components/CanvasPanelSlot.h" /** * 画布头文件 */
+#include "Blueprint/WidgetLayoutLibrary.h" /** * 控件函数头文件 */
+#include "Components/CanvasPanelSlot.h" /** * 画布头文件 */
 
 
-
-UWidgetDragButton::UWidgetDragButton()
-{
-	/** * 初始化数值 */
-	DragWidget = nullptr;
-	DragPositionOffset = { 0.0, 0.0 };
-}
-
-FString UWidgetDragButton::ICommunication_Implementation(UObject* InObject, const FString& InString, UObject*& InReturnObject)
-{
-	TArray<FString> Strings = UUniversalFunctionLibrarys::StringParseIntoArray(InString);
-	UWidget* Widget = Cast<UWidget>(InObject);
-	if (Widget && Strings.Num() >= 1 && Strings[0] == TEXT("OnDragWidget"))
-	{
-		if (Strings.Num() > 1 && Strings[1] != TEXT("0"))
-		{
-			OnDragWidget(Widget,true);
-			return  TEXT("1");
-		}
-		else
-		{
-			OnDragWidget(Widget, false);
-			return  TEXT("0");
-		}
-	}
-	return  TEXT("0");
-}
 
 bool UWidgetDragButton::OnDragWidget(UWidget* Widget, bool bDrag)
 {
