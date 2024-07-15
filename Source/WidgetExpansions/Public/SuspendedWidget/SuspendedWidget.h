@@ -1,6 +1,5 @@
 /**
  * Copyright: Aimo_皑墨
- * Open source protocol: MIT License
  * Open Source Date: Jun 27, 2023
  * BiLiBiLi (哔哩哔哩) address: https://space.bilibili.com/146962867
  * Open source address(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -8,22 +7,21 @@
  * Build powerful plugins together!!
  *
  * 版权所有权: Aimo_皑墨
- * 开源协议: MIT License
  * 开源时间: 2023年6月27日
  * BiLiBiLi(哔哩哔哩)地址: https://space.bilibili.com/146962867
  * 开源地址(Git): https://github.com/AimoTvT/WidgetExpansions
  * 欢迎有实力的大佬/萌新加入本插件的贡献
  * 一起打造强大的插件!!!
  */
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UMG/Public/Components/Image.h"
-#include "UMG/Public/Components/SizeBox.h"
-#include "UMG/Public/Components/TextBlock.h"
-#include "UMG/Public/Components/HorizontalBox.h"
+#include "Components/Image.h"
+#include "Components/SizeBox.h"
+#include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
+#include "EnhancedImage/EnhancedImage.h"
 
 #include "SuspendedWidget.generated.h"
 
@@ -41,13 +39,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
 	TObjectPtr<UHorizontalBox> HorizontalBoxWidget;
 
-	/** * 尺寸框控件 */
-	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-	TObjectPtr<USizeBox> SizeBoxWidget;
-
 	/** * 图像空间 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
-	TObjectPtr<UImage> ImageWidget;
+	TObjectPtr<UEnhancedImage> EnhancedImageWidget;
 
 	/** * 文字控件 */
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget), Category = "Aimo|Variable")
@@ -57,32 +51,35 @@ public:
 
 	/** * 三维位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	FVector Location;
+	FVector Location = FVector(0.0f, 0.0f, 40.0f);
 
 	/** * 三维位置终点位置 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	FVector EndLocation;
-
-	/** * 销毁时间 */
-	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	float DestructTimer;
-
-	/** * 动画速度 */
-	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	float AnimTimer;
+	FVector EndLocation = FVector(0.0f, 0.0f, 40.0f);
 
 	/** * 视口偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	FVector2D Offset;
+	FVector2D Offset = FVector2D(0.0f, 0.0f);
 
 	/** * 视口偏移 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
 	bool bPlayerViewportRelative;
 
-
-	/** * 定时器 */
+	/** * 动画速度 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
-	FTimerHandle TimerHandle;
+	float AnimTimer = 0.5f;
+
+	/** * 销毁时间 */
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+	float DestructTimer = 2.2f;
+
+	/** * 销毁时间 */
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+	float TDestructTimer = 2.2f;
+
+	/** *  */
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
+	uint8 RemoveAnim = 0;
 
 	/** * 销毁定时器 */
 	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
@@ -91,29 +88,29 @@ public:
 
 public:
 
-	virtual bool Initialize() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual void NativeConstruct() override;
 
-	/** * 触发拖拽并传入控件 */
+	/** *  */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-	virtual void SetSuspended(const FString& String, const FVector& LocationT, const FVector& EndLocationT, TSoftObjectPtr<UObject> Image = nullptr, const FVector2D& ImageSize = FVector2D(50.0, 50.0));
+	virtual void Init(const FText& InText, float InTimer = 2.2f, const FVector& InLocation = FVector(0.0f, 0.0f, 0.0f), const FVector& InEndLocation = FVector(0.0f, 0.0f, 220.0f), TSoftObjectPtr<UObject> InSoftObjectPtr = nullptr, const FVector2D& InImageSize = FVector2D(50.0f, 50.0f));
 
-	/** * 触发拖拽并传入控件,偏移版 */
+	/** *  */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-	virtual void SetSuspendedOffset(const FString& String, const FVector& LocationT, FVector OffsetLocationT = FVector(0.0f, 0.0f, 222.0f), TSoftObjectPtr<UObject> Image = nullptr, FVector2D ImageSize = FVector2D(50.0, 50.0));
+	virtual void InitOffset(FText InText, float InTimer = 2.2f, FVector InLocation = FVector(0.0f, 0.0f, 0.0f), FVector InOffsetLocation = FVector(0.0f, 0.0f, 220.0f), TSoftObjectPtr<UObject> InSoftObjectPtr = nullptr, FVector2D InImageSize = FVector2D(50.0f, 50.0f));
 
 	/** * 设置位置定时器 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-	virtual void TimerHandleLocation();
+	virtual void TimerHandleLocation(float InDeltaTime = 0.0f);
 
 	/** * 设置图像 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-	virtual void SetImage(TSoftObjectPtr<UObject> Image, FVector2D ImageSize = FVector2D(50.0, 50.0));
+	virtual void SetImageSoftObjectPtr(TSoftObjectPtr<UObject> InSoftObjectPtr, FVector2D InImageSize = FVector2D(50.0f, 50.0f));
 
 	/** * 添加销毁时间 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
-	virtual void AddDestructTimer(float Timer);
+	virtual void AddDestructTimer(float Timer, bool bSet = false);
 
 	/** * 销毁定时器 */
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")

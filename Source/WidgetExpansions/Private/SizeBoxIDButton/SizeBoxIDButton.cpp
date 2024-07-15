@@ -1,6 +1,5 @@
 /**
  * Copyright: Aimo_皑墨
- * Open source protocol: MIT License
  * Open Source Date: Jun 27, 2023
  * BiLiBiLi (哔哩哔哩) address: https://space.bilibili.com/146962867
  * Open source address(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -8,7 +7,6 @@
  * Build powerful plugins together!!
  *
  * 版权所有权: Aimo_皑墨
- * 开源协议: MIT License
  * 开源时间: 2023年6月27日
  * BiLiBiLi(哔哩哔哩)地址: https://space.bilibili.com/146962867
  * 开源地址(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -50,11 +48,8 @@ void USizeBoxIDButton::NativeConstruct()
 	if (ButtonWidget == nullptr)
 	{
 		ButtonWidget = NewObject<UButton>(this);
-		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
-		ButtonWidget->OnClicked.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
-		ButtonWidget->OnHovered.AddUnique(ScriptDelegate); //对接变量绑定函数
+		ButtonWidget->OnClicked.AddDynamic(this, &USizeBoxIDButton::OnClickedID_Event);
+		ButtonWidget->OnHovered.AddDynamic(this, &USizeBoxIDButton::OnHoveredID_Event);
 		ButtonWidget->SetStyle(ButtonStyle);
 		ClearChildren();
 		AddChild(ButtonWidget);

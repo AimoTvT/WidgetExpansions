@@ -1,6 +1,5 @@
 /**
  * Copyright: Aimo_皑墨
- * Open source protocol: MIT License
  * Open Source Date: Jun 27, 2023
  * BiLiBiLi (哔哩哔哩) address: https://space.bilibili.com/146962867
  * Open source address(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -8,7 +7,6 @@
  * Build powerful plugins together!!
  *
  * 版权所有权: Aimo_皑墨
- * 开源协议: MIT License
  * 开源时间: 2023年6月27日
  * BiLiBiLi(哔哩哔哩)地址: https://space.bilibili.com/146962867
  * 开源地址(Git): https://github.com/AimoTvT/WidgetExpansions
@@ -19,8 +17,8 @@
 
 #include "EnhancedImage/EnhancedImage.h"
 
-#include "UniversalFunctionLibrary/Public/UniversalFunctionLibrarys.h"
-#include "UniversalFunctionLibrary/Public/Widget/UniversalWidgetFunctionLibrary.h"
+#include "UniversalFunctionLibrarys.h"
+#include "Widget/UniversalWidgetFunctionLibrary.h"
 
 
 
@@ -39,6 +37,7 @@ void UEnhancedImage::AsyncBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& 
 			{
 				ensureMsgf(InSoftObjectPtr.Get(), TEXT("Failed to load %s"), *InSoftObjectPtr.ToSoftObjectPath().ToString());
 				StrongThis->SetBrushFromResourceObject(InSoftObjectPtr.Get());
+				StrongThis->OnAsyncObject.Broadcast(InSoftObjectPtr, true);
 				return;
 			}
 		}
@@ -72,6 +71,7 @@ void UEnhancedImage::SetBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& In
 	}
 	if (InSoftObjectPtr.IsNull())
 	{
+		OnAsyncObject.Broadcast(InSoftObjectPtr, false);
 		return;
 	}
 	if (InSoftObjectPtr.IsValid())
@@ -99,6 +99,9 @@ void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 			{
 				Size = Size * (MaxImageSize / Size);
 			}
+			FSlateBrush SlateBrush = GetBrush();
+			SlateBrush.SetImageSize(Size);
+			SetBrush(SlateBrush);
 			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, Size);
 			return;
 		}
@@ -108,6 +111,9 @@ void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 		}
 		if (MaxImageSize.X != 0.0f)
 		{
+			FSlateBrush SlateBrush = GetBrush();
+			SlateBrush.SetImageSize(MaxImageSize);
+			SetBrush(SlateBrush);
 			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, MaxImageSize);
 		}
 	}
