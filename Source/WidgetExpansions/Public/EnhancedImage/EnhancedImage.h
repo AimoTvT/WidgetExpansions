@@ -37,7 +37,7 @@ public:
 
 	/** * 图像比例 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (BindWidget), Category = "EnhancedImage|Variable")
-	bool bMaxImageSize = true;
+	bool bImageSizeMax = true;
 
 
 	/** * *  */

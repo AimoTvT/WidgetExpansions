@@ -14,7 +14,7 @@ void UNumericalProgressWidget::NativeTick(const FGeometry& MyGeometry, float InD
 	}
 	if (InterpTime <= 0.0f)
 	{
-		if (InterpExcessNumerical != Numerical + ExcessNumerical)
+		if (InterpExcessNumerical != Numerical + ExcessNumerical && Numerical / NumericalMax <= 1.0f)
 		{
 			InterpExcessNumerical = FMath::FInterpTo(InterpExcessNumerical, Numerical + ExcessNumerical, InDeltaTime, InterpSpeed);
 			BPSetProgress(1, InterpExcessNumerical / NumericalMax);
@@ -30,7 +30,7 @@ void UNumericalProgressWidget::SetNumerical(float InNumerical)
 {
 	if (ExcessNumerical == 0.0f && InNumerical < Numerical)
 	{
-		InterpTime = 0.5f;
+		InterpTime = DelayInterpTime;
 	}
 	Numerical = InNumerical;
 	BPOnSet(0);

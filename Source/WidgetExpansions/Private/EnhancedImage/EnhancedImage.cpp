@@ -95,7 +95,7 @@ void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 			Size.X = Texture2D->GetSizeX();
 			Size.Y = Texture2D->GetSizeY();
 			Size = UUniversalFunctionLibrarys::GetXYClampSize(Size.X, Size.Y, MaxImageSize.X, MaxImageSize.Y);
-			if (bMaxImageSize  && Size.X < MaxImageSize.X && Size.Y < MaxImageSize.Y)
+			if (bImageSizeMax && Size.X < MaxImageSize.X && Size.Y < MaxImageSize.Y)
 			{
 				Size = Size * (MaxImageSize / Size);
 			}

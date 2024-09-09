@@ -33,14 +33,18 @@ public:
 
 	/** * 插值超额数值 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
-	float InterpExcessNumerical = 0.0f;
+	float InterpExcessNumerical = 100.0f;
 
 	/** * 插值速度 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
 	float InterpSpeed = 10.0f;
 
-	/** * 插值速度 */
+	/** * 延迟插值时间 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aimo|Variable")
+	float DelayInterpTime = 0.5f;
+
+	/** * 插值时间 */
+	UPROPERTY(BlueprintReadWrite, Category = "Aimo|Variable")
 	float InterpTime = 0.0f;
 	
 public:
