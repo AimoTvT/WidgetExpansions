@@ -18,6 +18,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/HorizontalBox.h"
+#include "IDButton/IDButton.h"
+
 #include "SelectHorizontalBox.generated.h"
 
 /** *

@@ -23,11 +23,8 @@ void UIDButton::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt(); 
 	if (IsDesignTime() == false)
 	{
-		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
-		OnClicked.AddUnique(ScriptDelegate);
-		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
-		OnHovered.AddUnique(ScriptDelegate);
+		OnClicked.AddDynamic(this, &UIDButton::OnClickedID_Event);
+		OnHovered.AddDynamic(this, &UIDButton::OnHoveredID_Event);
 	}
 	return;
 }

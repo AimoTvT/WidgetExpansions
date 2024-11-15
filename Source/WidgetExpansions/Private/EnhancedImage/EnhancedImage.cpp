@@ -37,6 +37,7 @@ void UEnhancedImage::AsyncBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& 
 			{
 				ensureMsgf(InSoftObjectPtr.Get(), TEXT("Failed to load %s"), *InSoftObjectPtr.ToSoftObjectPath().ToString());
 				StrongThis->SetBrushFromResourceObject(InSoftObjectPtr.Get());
+				StrongThis->OnAsyncObject.Broadcast(InSoftObjectPtr, true);
 				return;
 			}
 		}
@@ -70,6 +71,7 @@ void UEnhancedImage::SetBrushFromSoftObjectPtr(const TSoftObjectPtr<UObject>& In
 	}
 	if (InSoftObjectPtr.IsNull())
 	{
+		OnAsyncObject.Broadcast(InSoftObjectPtr, false);
 		return;
 	}
 	if (InSoftObjectPtr.IsValid())
@@ -93,10 +95,13 @@ void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 			Size.X = Texture2D->GetSizeX();
 			Size.Y = Texture2D->GetSizeY();
 			Size = UUniversalFunctionLibrarys::GetXYClampSize(Size.X, Size.Y, MaxImageSize.X, MaxImageSize.Y);
-			if (bMaxImageSize  && Size.X < MaxImageSize.X && Size.Y < MaxImageSize.Y)
+			if (bImageSizeMax && Size.X < MaxImageSize.X && Size.Y < MaxImageSize.Y)
 			{
 				Size = Size * (MaxImageSize / Size);
 			}
+			FSlateBrush SlateBrush = GetBrush();
+			SlateBrush.SetImageSize(Size);
+			SetBrush(SlateBrush);
 			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, Size);
 			return;
 		}
@@ -106,6 +111,9 @@ void UEnhancedImage::SetBrushFromResourceObject(UObject* Object)
 		}
 		if (MaxImageSize.X != 0.0f)
 		{
+			FSlateBrush SlateBrush = GetBrush();
+			SlateBrush.SetImageSize(MaxImageSize);
+			SetBrush(SlateBrush);
 			UUniversalWidgetFunctionLibrary::SetWidgetSize(this, MaxImageSize);
 		}
 	}

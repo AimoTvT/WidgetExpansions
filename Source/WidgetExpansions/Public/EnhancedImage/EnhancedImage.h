@@ -37,8 +37,16 @@ public:
 
 	/** * 图像比例 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (BindWidget), Category = "EnhancedImage|Variable")
-	bool bMaxImageSize = true;
+	bool bImageSizeMax = true;
 
+
+	/** * *  */
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAsyncObject, const TSoftObjectPtr<UObject>&, InSoftObjectPtr, bool, bLoad);
+
+	/** * *  */
+	UPROPERTY(BlueprintAssignable, Category = "SpaceItemComponent|On")
+	FOnAsyncObject OnAsyncObject;
+	
 public:
 
 	/** * 设置最大图像大小 */

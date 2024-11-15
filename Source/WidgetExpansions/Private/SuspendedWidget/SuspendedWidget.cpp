@@ -18,61 +18,60 @@
 #include "SuspendedWidget/SuspendedWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Animation/WidgetAnimation.h"
+#include "Widget/UniversalWidgetFunctionLibrary.h"
 
 
-bool USuspendedWidget::Initialize()
+void USuspendedWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	bool InitializeT = Super::Initialize();
-	AnimTimer = 0.5;
-	Location = FVector(0.0f, 0.0f, 40.0f);
-	EndLocation = FVector(0.0f, 0.0f, 40.0f);
-	return InitializeT;
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (Location != EndLocation)
+	{
+		TimerHandleLocation(InDeltaTime);
+	}
 }
+
 
 void USuspendedWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	AddDestructTimer(2.2); /** * 添加销毁时间 */
 	SuspendedPlayAnimation(TEXT("Play"));  /** * 播放开始动画 */
-	if (!GetWorld()->GetTimerManager().IsTimerActive(TimerHandle))
-	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USuspendedWidget::TimerHandleLocation, 0.02f, true); /** * 启动设置位置定时器 */
-	}
 }
 
-void USuspendedWidget::SetSuspended(const FString& String, const FVector& LocationT, const FVector& EndLocationT, TSoftObjectPtr<UObject> Image, const FVector2D& ImageSize)
+void USuspendedWidget::Init(const FText& InText, float InTimer, const FVector& InLocation, const FVector& InEndLocation, TSoftObjectPtr<UObject> InSoftObjectPtr, const FVector2D& InImageSize)
 {
-	Location = LocationT;
-	EndLocation = EndLocationT;
-	SetImage(Image, ImageSize); /** * 设置图像 */
+	Location = InLocation;
+	EndLocation = InEndLocation;
+	AddDestructTimer(InTimer, true);
+	SetImageSoftObjectPtr(InSoftObjectPtr, InImageSize);
+	if (TextBlockWidget)
+	{
+		TextBlockWidget->SetText(InText);
+	}
 	if (GetWorld() && GetWorld()->GetFirstPlayerController() && GetWorld()->GetFirstPlayerController()->PlayerCameraManager)
 	{
-		float Size = FVector::Distance(LocationT, GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation()); /** * 计算摄像机和目标的距离 */
+		float Size = FVector::Distance(Location, GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation()); /** * 计算摄像机和目标的距离 */
 		Size = 1 - FMath::Clamp(Size * 0.22 * 0.001, 0.0, 0.6);
 		SetRenderTransform(FWidgetTransform{ {0.0f, 0.0f},{Size,Size},{0.0f, 0.0f},0.0f }); /** * 设置变换 */
 	}
-	if (TextBlockWidget)
-	{
-		TextBlockWidget->SetText(FText::FromString(String));
-	}
 }
 
-void USuspendedWidget::SetSuspendedOffset(const FString& String, const FVector& LocationT, FVector OffsetLocationT, TSoftObjectPtr<UObject> Image, FVector2D ImageSize)
+void USuspendedWidget::InitOffset(FText InText, float InTimer, FVector InLocation, FVector InOffsetLocation, TSoftObjectPtr<UObject> InSoftObjectPtr, FVector2D InImageSize)
 {
-	return SetSuspended(String, LocationT, LocationT + OffsetLocationT, Image, ImageSize);
+	Init(InText, InTimer, InLocation, InOffsetLocation + InLocation, InSoftObjectPtr, InImageSize);
 }
 
-void USuspendedWidget::TimerHandleLocation() /** * 定时器0.02秒设置三维到屏幕位置 */
+void USuspendedWidget::TimerHandleLocation(float InDeltaTime) /** * 定时器0.2秒设置三维到屏幕位置 */
 {
+	DestructTimer -= InDeltaTime;
 	if (Location != EndLocation)
 	{
 		FVector2D OffsetT;
-		Location = FMath::VInterpTo(Location, EndLocation, 0.02f, AnimTimer);
+		Location = FMath::VInterpTo(Location, EndLocation, InDeltaTime, AnimTimer);
 		if (UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(GetOwningPlayer(), Location, OffsetT, bPlayerViewportRelative))
 		{
-			if (GetVisibility() != ESlateVisibility::Visible)
+			if (GetVisibility() != ESlateVisibility::HitTestInvisible)
 			{
-				SetVisibility(ESlateVisibility::Visible);
+				SetVisibility(ESlateVisibility::HitTestInvisible);
 			}
 			OffsetT = (OffsetT + GetDesiredSize() * -0.5 + Offset) * UWidgetLayoutLibrary::GetViewportScale(this);
 			SetPositionInViewport(OffsetT);/** * 计算完整偏移,并设置位置 */
@@ -85,77 +84,65 @@ void USuspendedWidget::TimerHandleLocation() /** * 定时器0.02秒设置三维�
 			}
 		}
 	}
-	return;
-}
-
-void USuspendedWidget::SetImage(TSoftObjectPtr<UObject> SoftObject, FVector2D ImageSize) /** * 设置图像 */
-{
-	if (SoftObject.IsValid())
+	if (DestructTimer <= 2.0f)
 	{
-		TSoftObjectPtr<UTexture2D> SoftObjectPtrTexture2D;
-		SoftObjectPtrTexture2D = SoftObject.ToString();
-		if (SoftObjectPtrTexture2D.IsValid())
+		SuspendedPlayAnimation(TEXT("Remove"));
+		if (DestructTimer <= 0.0f)
 		{
-			ImageWidget->SetBrushFromSoftTexture(SoftObjectPtrTexture2D);
-			if (SizeBoxWidget)
+			if (GetWorld()->GetTimerManager().IsTimerActive(DestructTimerHandle))
 			{
-				SizeBoxWidget->SetWidthOverride(ImageSize.X);
-				SizeBoxWidget->SetHeightOverride(ImageSize.Y);
+				GetWorld()->GetTimerManager().ClearTimer(DestructTimerHandle);
 			}
-			return;
-		}
-		else
-		{
-			TSoftObjectPtr<UMaterialInterface> SoftObjectPtrMaterialInterface;
-			SoftObjectPtrMaterialInterface = SoftObject.ToString();
-			if (SoftObjectPtrMaterialInterface.IsValid())
-			{
-				ImageWidget->SetBrushFromSoftMaterial(SoftObjectPtrMaterialInterface);
-				if (SizeBoxWidget)
-				{
-					SizeBoxWidget->SetWidthOverride(ImageSize.X);
-					SizeBoxWidget->SetHeightOverride(ImageSize.Y);
-				}
-				return;
-			}
-			else
-			{
-				if (SizeBoxWidget)
-				{
-					SizeBoxWidget->SetWidthOverride(0);
-					SizeBoxWidget->SetHeightOverride(0);
-				}
-			}
-		}
-	}
-	else
-	{
-		if (SizeBoxWidget)
-		{
-			SizeBoxWidget->SetWidthOverride(0);
-			SizeBoxWidget->SetHeightOverride(0);
+			RemoveFromParent(); /** * 从父类移除 */
 		}
 	}
 }
 
-void USuspendedWidget::AddDestructTimer(float Timer) /** * 添加销毁时间 */
+void USuspendedWidget::SetImageSoftObjectPtr(TSoftObjectPtr<UObject> InSoftObjectPtr, FVector2D InImageSize) /** * 设置图像 */
 {
-	DestructTimer += Timer;
-	if (DestructTimer > 0)
+	EnhancedImageWidget->SetBrushFromSoftObjectPtr(InSoftObjectPtr, InSoftObjectPtr.IsNull() ? FVector2D(0.0f, 0.0f) : InImageSize);
+}
+
+void USuspendedWidget::AddDestructTimer(float Timer, bool bSet) /** * 添加销毁时间 */
+{
+	if (bSet)
 	{
-		if (!GetWorld()->GetTimerManager().IsTimerActive(DestructTimerHandle))
-		{
-			GetWorld()->GetTimerManager().SetTimer(DestructTimerHandle, this, &USuspendedWidget::NativeDestructTimerHandle, 0.2f, true);
-		}
+		DestructTimer = Timer;
 	}
 	else
 	{
-		if (GetWorld()->GetTimerManager().IsTimerActive(DestructTimerHandle))
-		{
-			GetWorld()->GetTimerManager().ClearTimer(DestructTimerHandle);
-		}
-		SuspendedPlayAnimation(TEXT("Des")); /** * 播放销毁动画 */
+		DestructTimer += Timer;
 	}
+	TDestructTimer = DestructTimer;
+	if (!GetWorld()->GetTimerManager().IsTimerActive(DestructTimerHandle))
+	{
+		GetWorld()->GetTimerManager().SetTimer(DestructTimerHandle, this, &USuspendedWidget::NativeDestructTimerHandle, 0.2f, true); /** * 启动设置定时器 */
+	}
+	if (DestructTimer <= 2.0f)
+	{
+		if (RemoveAnim != 1)
+		{
+			SuspendedPlayAnimation(TEXT("Remove"));
+		}
+		if (DestructTimer <= 0.0f)
+		{
+			if (GetWorld()->GetTimerManager().IsTimerActive(DestructTimerHandle))
+			{
+				GetWorld()->GetTimerManager().ClearTimer(DestructTimerHandle);
+			}
+			RemoveFromParent(); /** * 从父类移除 */
+		}
+	}
+}
+
+void USuspendedWidget::NativeDestructTimerHandle()
+{
+	TDestructTimer -= 0.2;
+	if (TDestructTimer < DestructTimer)
+	{
+		TimerHandleLocation(DestructTimer - TDestructTimer);
+	}
+	TDestructTimer = DestructTimer;
 }
 
 void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
@@ -163,7 +150,7 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 	UObject* Object;
 	FObjectProperty* ObjectProperty;
 	UWidgetAnimation* WidgetAnimation;
-	if (String == TEXT("Des")) /** * 判断是否销毁 */
+	if (String == TEXT("Remove")) /** * 判断是否销毁 */
 	{
 		if (DestructTimer < 1.8)
 		{
@@ -176,6 +163,7 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 			WidgetAnimation = Cast<UWidgetAnimation>(Object);
 			if (WidgetAnimation)
 			{
+				RemoveAnim = 1;
 				PlayAnimation(WidgetAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward);
 			}
 		}
@@ -190,6 +178,7 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 			WidgetAnimation = Cast<UWidgetAnimation>(Object);
 			if (WidgetAnimation)
 			{
+				RemoveAnim = 2;
 				PlayAnimation(WidgetAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward);
 			}
 		}
@@ -197,15 +186,12 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 	}
 }
 
-void USuspendedWidget::NativeDestructTimerHandle()
+void USuspendedWidget::SetTextBlockSize(float InSize)
 {
-	DestructTimer = DestructTimer - 0.2;
-	if (DestructTimer <= 2.0)
-	{
-		SuspendedPlayAnimation(TEXT("Des"));
-	}
-	if (DestructTimer <= 0.0)
-	{
-		RemoveFromParent(); /** * 从父类移除 */
-	}
+	UUniversalWidgetFunctionLibrary::SetTextBlockSize(TextBlockWidget, InSize);
+}
+
+void USuspendedWidget::SetTextBlockColors(FSlateColor InColorAndOpacity, FLinearColor InLinearColor, int InOutlineSize)
+{
+	UUniversalWidgetFunctionLibrary::SetTextBlockColors(TextBlockWidget, InColorAndOpacity, InLinearColor, InOutlineSize);
 }

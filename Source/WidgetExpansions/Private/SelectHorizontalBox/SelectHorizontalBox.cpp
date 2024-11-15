@@ -96,11 +96,8 @@ void USelectHorizontalBox::InitButton()
 		{
 			ButtonWidgets.Add(IDButton);
 			IDButton->ID = IDs[i];
-			FScriptDelegate ScriptDelegate; //建立对接变量
-			ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
-			IDButton->OnClickedID.AddUnique(ScriptDelegate); //对接变量绑定函数
-			ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
-			IDButton->OnHoveredID.AddUnique(ScriptDelegate); //对接变量绑定函数
+			IDButton->OnClickedID.AddDynamic(this, &USelectHorizontalBox::OnClickedID_Event);
+			IDButton->OnHoveredID.AddDynamic(this, &USelectHorizontalBox::OnHoveredID_Event);
 			IDButton->SetStyle(SelectIndex == i ? SelectStyle : DefaultStyle);
 			UPanelSlot* PanelSlot = AddChild(IDButton);
 			if (PanelSlot)

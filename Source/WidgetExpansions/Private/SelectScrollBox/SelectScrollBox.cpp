@@ -19,6 +19,9 @@
 #include "IDButton/IDButton.h"
 #include "Components/TextBlock.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "Components/ScrollBoxSlot.h"
+#include "Components/ButtonSlot.h"
+#include "Components/SizeBoxSlot.h"
 
 
 void USelectScrollBox::OnWidgetRebuilt()
@@ -53,8 +56,11 @@ void USelectScrollBox::NativeConstruct()
 
 void USelectScrollBox::OnClickedID_Event(const FString& OnID)
 {
-	OnClickedSelect.Broadcast(ID, OnID);
-	SetSelectIndex(IDs.Find(OnID));
+	if (bRepeatedIndex || SelectIndex != IDs.Find(OnID))
+	{
+		OnClickedSelect.Broadcast(ID, OnID);
+		SetSelectIndex(IDs.Find(OnID));
+	}
 }
 
 void USelectScrollBox::OnHoveredID_Event(const FString& OnID)
@@ -76,6 +82,11 @@ void USelectScrollBox::SetSelectIndex(int Index, bool bDelegate)
 			if (IDButton)
 			{
 				IDButton->SetStyle(DefaultStyle);
+				UTextBlock* WidgetText = Cast<UTextBlock>(IDButton->GetChildAt(0));
+				if (WidgetText)
+				{
+					WidgetText->SetColorAndOpacity(DefaultFontInfoColor);
+				}
 			}
 		}
 		if (SizeBoxWidgets.IsValidIndex(Index))
@@ -84,6 +95,11 @@ void USelectScrollBox::SetSelectIndex(int Index, bool bDelegate)
 			if (IDButton)
 			{
 				IDButton->SetStyle(SelectStyle);
+				UTextBlock* WidgetText = Cast<UTextBlock>(IDButton->GetChildAt(0));
+				if (WidgetText)
+				{
+					WidgetText->SetColorAndOpacity(SelectFontInfoColor);
+				}
 			}
 		}
 		SelectIndex = Index;
@@ -92,10 +108,12 @@ void USelectScrollBox::SetSelectIndex(int Index, bool bDelegate)
 
 void USelectScrollBox::InitButton()
 {
+	SelectIndex = 0;
 	for (size_t i = 0; i < SizeBoxWidgets.Num(); i++)
 	{
 		SizeBoxWidgets[i]->RemoveFromParent();
 	}
+	SizeBoxWidgets.Empty();
 	for (size_t i = 0; i < IDs.Num(); i++)
 	{
 		USizeBox* SizeBox = NewObject<USizeBox>(this);
@@ -104,17 +122,22 @@ void USelectScrollBox::InitButton()
 			return;
 		}
 		SizeBoxWidgets.Add(SizeBox);
-		AddChild(SizeBox);
+		UPanelSlot* PanelSlot = AddChild(SizeBox);
+		if (PanelSlot)
+		{
+			UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(PanelSlot);
+			if (ScrollBoxSlot)
+			{
+				ScrollBoxSlot->SetPadding(StylePadding);
+			}
+		}
 		if (GetOrientation() == EOrientation::Orient_Vertical)
 		{
 			SizeBox->SetHeightOverride(ButttonSize);
 		}
 		else
 		{
-			if (ButttonSize > 0.0f)
-			{
-				SizeBox->SetWidthOverride(ButttonSize);
-			}
+			SizeBox->SetMinDesiredWidth(ButttonSize);
 		}
 		UIDButton* IDButton = NewObject<UIDButton>(this);
 		if (IDButton == nullptr)
@@ -122,26 +145,14 @@ void USelectScrollBox::InitButton()
 			return;
 		}
 		IDButton->ID = IDs[i];
-		FScriptDelegate ScriptDelegate; //建立对接变量
-		ScriptDelegate.BindUFunction(this, TEXT("OnClickedID_Event")); //对接变量绑定函数
-		IDButton->OnClickedID.AddUnique(ScriptDelegate); //对接变量绑定函数
-		ScriptDelegate.BindUFunction(this, TEXT("OnHoveredID_Event")); //对接变量绑定函数
-		IDButton->OnHoveredID.AddUnique(ScriptDelegate); //对接变量绑定函数
+		IDButton->OnClickedID.AddDynamic(this, &USelectScrollBox::OnClickedID_Event);
+		IDButton->OnHoveredID.AddDynamic(this, &USelectScrollBox::OnHoveredID_Event);
 		IDButton->SetStyle(SelectIndex == i ? SelectStyle : DefaultStyle);
-		UPanelSlot* PanelSlot = SizeBox->AddChild(IDButton);
-		if (PanelSlot)
-		{
-			UHorizontalBoxSlot* HorizontalBoxSlot = Cast<UHorizontalBoxSlot>(PanelSlot);
-			if (HorizontalBoxSlot)
-			{
-				FSlateChildSize InSize;
-				InSize.SizeRule = ESlateSizeRule::Fill;
-				HorizontalBoxSlot->SetSize(InSize);
-			}
-		}
+		SizeBox->AddChild(IDButton);
 		UTextBlock* WidgetText = NewObject<UTextBlock>(this);
 		if (WidgetText)
 		{
+			WidgetText->SetColorAndOpacity(SelectIndex == i ? SelectFontInfoColor : DefaultFontInfoColor);
 			if (SlateFontInfo.FontObject)
 			{
 				WidgetText->SetFont(SlateFontInfo);
@@ -150,15 +161,44 @@ void USelectScrollBox::InitButton()
 			{
 				WidgetText->SetText(Texts[i]);
 			}
-			IDButton->AddChild(WidgetText);
+			PanelSlot = IDButton->AddChild(WidgetText);
+			if (PanelSlot)
+			{
+				UButtonSlot* ButtonSlot = Cast<UButtonSlot>(PanelSlot);
+				if (ButtonSlot)
+				{
+					ButtonSlot->SetPadding(FontInfoPadding);
+				}
+			}
 		}
 	}
 }
 
 void USelectScrollBox::InitData(TArray<FString> InIDs, TArray<FText> InTexts)
 {
-	IDs = InIDs;
-	Texts = InTexts;
+	if (ReverseSelect)
+	{
+		IDs.Empty();
+		int Index;
+		for (size_t i = 0; i < InIDs.Num(); i++)
+		{
+			Index = InIDs.Num() - 1 - i;
+			IDs.Add(InIDs[Index]);
+			if (InTexts.IsValidIndex(Index))
+			{
+				Texts.Add(InTexts[Index]);
+			}
+			else
+			{
+				Texts.Add(FText());
+			}
+		}
+	}
+	else
+	{
+		IDs = InIDs;
+		Texts = InTexts;
+	}
 	InitButton();
 }
 
