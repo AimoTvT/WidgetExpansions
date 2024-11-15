@@ -18,6 +18,7 @@
 #include "SuspendedWidget/SuspendedWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Animation/WidgetAnimation.h"
+#include "Widget/UniversalWidgetFunctionLibrary.h"
 
 
 void USuspendedWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -183,4 +184,14 @@ void USuspendedWidget::SuspendedPlayAnimation(const FString& String)
 		}
 		return;
 	}
+}
+
+void USuspendedWidget::SetTextBlockSize(float InSize)
+{
+	UUniversalWidgetFunctionLibrary::SetTextBlockSize(TextBlockWidget, InSize);
+}
+
+void USuspendedWidget::SetTextBlockColors(FSlateColor InColorAndOpacity, FLinearColor InLinearColor, int InOutlineSize)
+{
+	UUniversalWidgetFunctionLibrary::SetTextBlockColors(TextBlockWidget, InColorAndOpacity, InLinearColor, InOutlineSize);
 }

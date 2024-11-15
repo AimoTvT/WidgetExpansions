@@ -120,5 +120,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
 	virtual void SuspendedPlayAnimation(const FString& String);
 
+	/** *  */
+	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
+	virtual void SetTextBlockSize(float InSize = 24.0f);
+
+	/** *  */
+	UFUNCTION(BlueprintCallable, Category = "Aimo|Function")
+	virtual void SetTextBlockColors(FSlateColor InColorAndOpacity, FLinearColor InLinearColor, int InOutlineSize = 2);
+	
 
 };

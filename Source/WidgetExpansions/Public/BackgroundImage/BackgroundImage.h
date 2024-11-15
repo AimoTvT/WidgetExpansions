@@ -19,7 +19,7 @@ class WIDGETEXPANSIONS_API UBackgroundImage : public UImage
 public:
 
 	/** *  */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UBackgroundImage|Variable")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UBackgroundImage|Variable")
 	FName Name;
 
 
